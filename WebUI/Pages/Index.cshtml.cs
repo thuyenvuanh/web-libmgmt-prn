@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WebUI.Utils;
 
 namespace WebUI.Pages
 {
@@ -14,7 +15,6 @@ namespace WebUI.Pages
 
         public void OnGet()
         {
-
         }
     }
 }
