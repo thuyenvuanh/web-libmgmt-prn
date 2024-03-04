@@ -33,7 +33,21 @@ public class AccountDAO
         }
         else
         {
-            _dbContext.Accounts.Update(account);
+            try
+            {
+                _dbContext.Accounts.Update(account);
+            }
+            catch (Exception)
+            {
+                if (_dbContext.Accounts.Any(x => x.Id == account.Id))
+                {
+                    _dbContext.Accounts.Attach(account).State = EntityState.Modified;
+                    _dbContext.SaveChanges();
+                } else
+                {
+                    throw;
+                }
+            }
         }
         _dbContext.SaveChanges();
         return _dbContext.Accounts.Where(a => a.Email == account.Email).First();
@@ -45,5 +59,5 @@ public class AccountDAO
         _dbContext.SaveChanges();
     }
 
-    public List<Account> SearchByEmail(string keyword) => _dbContext.Accounts.Where(a => a.Email.Contains(keyword)).ToList();
+    public List<Account> SearchByEmail(string keyword) => _dbContext.Accounts.AsNoTracking().Where(a => a.Email.Contains(keyword)).ToList();
 }

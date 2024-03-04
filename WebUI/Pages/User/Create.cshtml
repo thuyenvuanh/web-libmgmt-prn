@@ -1,13 +1,12 @@
 ﻿@page
+@using BusinessObjects
 @model WebUI.Pages.User.CreateModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Account</h4>
+<h1>Create Account</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -24,19 +23,23 @@
                 <span asp-validation-for="Account.Password" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Account.RePassword" class="control-label"></label>
+                <input asp-for="Account.RePassword" class="form-control" />
+                <span asp-validation-for="Account.RePassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Account.Role" class="control-label"></label>
-                <input asp-for="Account.Role" class="form-control" />
+                <select asp-for="Account.Role" asp-items="@Html.GetEnumSelectList<ERole>()" class="form-control">
+                    <option selected value="">Please Select</option>
+                </select>
                 <span asp-validation-for="Account.Role" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
+                <a class="btn btn-outline-secondary mx-3" asp-page="Index">Cancel</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="Index">Back to List</a>
 </div>
 
 @section Scripts {

@@ -11,4 +11,8 @@ public class AuthorRepository : IAuthorRepository
     public Author? GetById(int id) => AuthorDAO.Instance.GetById(id);
 
     public List<Author> SearchAuthors(string keyword) => AuthorDAO.Instance.SearchAuthors(keyword);
+
+    public Author? SaveAuthor(Author author) => AuthorDAO.Instance.SaveAuthor(author);
+
+    public bool DeleteAuthor(int id) => AuthorDAO.Instance.Delete(id);
 }

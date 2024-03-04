@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebUI.Binding;
+using BusinessObjects.Models;
 using Repositories.Interfaces;
 
-namespace WebUI.Pages.User
+namespace WebUI.Pages.Authors
 {
     public class CreateModel : PageModel
     {
-        private readonly IAccountRepository accountRepository;
+        private readonly IAuthorRepository authorRepository;
 
-        public CreateModel(IAccountRepository accountRepository)
+        public CreateModel(IAuthorRepository authorRepository)
         {
-            this.accountRepository = accountRepository;
+            this.authorRepository = authorRepository;
         }
 
         public IActionResult OnGet()
@@ -20,16 +20,16 @@ namespace WebUI.Pages.User
         }
 
         [BindProperty]
-        public RegisterFormBinding Account { get; set; } = default!;
+        public Author Author { get; set; } = default!;
 
         public IActionResult OnPost()
         {
-            if (!ModelState.IsValid || Account == null)
+            if (!ModelState.IsValid || Author == null)
             {
                 return Page();
             }
 
-            accountRepository.SaveAccount(Account.ToAccount());
+            authorRepository.SaveAuthor(Author);
 
             return RedirectToPage("./Index");
         }

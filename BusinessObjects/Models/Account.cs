@@ -13,5 +13,13 @@
         public int Role { get; set; }
 
         public virtual ICollection<BorrowItem> BorrowItems { get; set; }
+
+        public void UpdateWith(Account account)
+        {
+            Id = account.Id;
+            Email = account.Email;
+            Password = account.Password;
+            Role = account.Role;
+        }
     }
 }

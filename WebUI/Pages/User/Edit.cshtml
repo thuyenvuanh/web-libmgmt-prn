@@ -1,13 +1,12 @@
 ﻿@page
+@using BusinessObjects
 @model WebUI.Pages.User.EditModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Account</h4>
+<h1>Edit Account</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -20,25 +19,46 @@
                 <span asp-validation-for="Account.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="OldPassword" class="control-label"></label>
+                <input asp-for="OldPassword" class="form-control" />
+                <span id="oldPasswordErrorMessage" class="text-danger">@Model.OldPasswordErrorMessage</span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Account.Password" class="control-label"></label>
-                <input asp-for="Account.Password" class="form-control" />
+                <input asp-for="Account.Password" class="form-control"/>
                 <span asp-validation-for="Account.Password" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Account.RePassword" class="control-label"></label>
+                <input asp-for="Account.RePassword" class="form-control" />
+                <span asp-validation-for="Account.RePassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Account.Role" class="control-label"></label>
-                <input asp-for="Account.Role" class="form-control" />
+                <select asp-for="Account.Role" asp-items="@Html.GetEnumSelectList<ERole>()" class="form-control" >
+                    <option selected value="">Please Select</option>
+                </select>
                 <span asp-validation-for="Account.Role" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-page="./Index" class="btn btn-outline-secondary mx-3">Cancel</a>
             </div>
+            
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
+<script>
+    // remove error message when changes in input field happened
+    document.addEventListener("DOMContentLoaded", function (event) {
+        console.log('event loaded');
+        $("input#OldPassword").on('input', () => {
+            $("span#oldPasswordErrorMessage").remove();
+            $("input#OldPassword").off();
+        })
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

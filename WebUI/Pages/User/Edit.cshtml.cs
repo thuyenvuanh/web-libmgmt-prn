@@ -1,57 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BusinessObjects.Models;
+using Repositories.Interfaces;
+using WebUI.Binding;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebUI.Pages.User
 {
     public class EditModel : PageModel
     {
-        private readonly BusinessObjects.Models.LibMgmtContext _context;
+        private readonly IAccountRepository accountRepository;
 
-        public EditModel(BusinessObjects.Models.LibMgmtContext context)
+        public EditModel(IAccountRepository accountRepository)
         {
-            _context = context;
+            this.accountRepository = accountRepository;
         }
 
         [BindProperty]
-        public Account Account { get; set; } = default!;
+        public RegisterFormBinding Account { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        [BindProperty]
+        [Display(Name = "Old Password")]
+        [Required, MinLength(6), DataType(DataType.Password),]
+        public string OldPassword { get; set; } = string.Empty;
+
+        [BindProperty]
+        public string? OldPasswordErrorMessage { get; set; }
+
+        public IActionResult OnGet(int? id)
         {
-            if (id == null || _context.Accounts == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var account =  await _context.Accounts.FirstOrDefaultAsync(m => m.Id == id);
+            var account =  accountRepository.GetByID((int)id);
+
+
             if (account == null)
             {
                 return NotFound();
             }
-            Account = account;
+            Account = RegisterFormBinding.FromAccount(account);
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.Attach(Account).State = EntityState.Modified;
+            var currentAccount = accountRepository.GetByID(Account.Id);
+            if (currentAccount == null)
+            {
+                return NotFound();
+            }
+            if (!currentAccount.Password.Equals(OldPassword))
+            {
+                OldPasswordErrorMessage = "Password incorrect";
+                return Page();
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                currentAccount.UpdateWith(Account.ToAccount());
+                accountRepository.SaveAccount(currentAccount);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -70,7 +85,7 @@ namespace WebUI.Pages.User
 
         private bool AccountExists(int id)
         {
-          return (_context.Accounts?.Any(e => e.Id == id)).GetValueOrDefault();
+            return accountRepository.GetByID(id) != null;
         }
     }
 }

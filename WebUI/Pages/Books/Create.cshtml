@@ -1,0 +1,49 @@
+﻿@page
+@model WebUI.Pages.Books.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Book</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Book.Name" class="control-label"></label>
+                <input asp-for="Book.Name" class="form-control" />
+                <span asp-validation-for="Book.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Book.Isbn" class="control-label"></label>
+                <input asp-for="Book.Isbn" class="form-control" />
+                <span asp-validation-for="Book.Isbn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Book.PublishedDate" class="control-label"></label>
+                <input asp-for="Book.PublishedDate" class="form-control" />
+                <span asp-validation-for="Book.PublishedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Book.Author" class="control-label"></label>
+                <input asp-for="Book.Author" class="form-control" list="authorList"></input>
+                <datalist id="authorList">
+                    @foreach(string author in Model.SelectableAuthor)
+                    {
+                        <option value="@author"/>
+                    }
+                </datalist>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a class="btn btn-outline-secondary mx-3" asp-page="Index">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,31 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using BusinessObjects.Models;
+using Repositories.Interfaces;
 
 namespace WebUI.Pages.User
 {
     public class IndexModel : PageModel
     {
-        private readonly BusinessObjects.Models.LibMgmtContext _context;
-
-        public IndexModel(BusinessObjects.Models.LibMgmtContext context)
+        private readonly IAccountRepository accountRepository;
+        public IndexModel(IAccountRepository accountRepository)
         {
-            _context = context;
+           this.accountRepository = accountRepository;
         }
 
         public IList<Account> Account { get;set; } = default!;
 
-        public async Task OnGetAsync()
+        public void OnGet()
         {
-            if (_context.Accounts != null)
-            {
-                Account = await _context.Accounts.ToListAsync();
-            }
+            Account = accountRepository.GetAll();
         }
     }
 }

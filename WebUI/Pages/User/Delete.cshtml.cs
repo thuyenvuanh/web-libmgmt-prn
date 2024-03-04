@@ -1,59 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using BusinessObjects.Models;
+using Repositories.Interfaces;
 
 namespace WebUI.Pages.User
 {
     public class DeleteModel : PageModel
     {
-        private readonly BusinessObjects.Models.LibMgmtContext _context;
+        private readonly IAccountRepository accountRepository;
 
-        public DeleteModel(BusinessObjects.Models.LibMgmtContext context)
+        public DeleteModel(IAccountRepository accountRepository)
         {
-            _context = context;
+            this.accountRepository = accountRepository;
         }
 
-        [BindProperty]
-      public Account Account { get; set; } = default!;
-
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int? id)
         {
-            if (id == null || _context.Accounts == null)
-            {
-                return NotFound();
-            }
-
-            var account = await _context.Accounts.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (account == null)
-            {
-                return NotFound();
-            }
-            else 
-            {
-                Account = account;
-            }
-            return Page();
+            return RedirectToPage("/User/Index");
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.Accounts == null)
+            if (id == null)
             {
                 return NotFound();
             }
-            var account = await _context.Accounts.FindAsync(id);
+
+            var account = accountRepository.GetByID((int)id);
 
             if (account != null)
             {
-                Account = account;
-                _context.Accounts.Remove(Account);
-                await _context.SaveChangesAsync();
+                accountRepository.Delete(account);
             }
 
             return RedirectToPage("./Index");

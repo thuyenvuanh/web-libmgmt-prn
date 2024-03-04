@@ -2,7 +2,7 @@
 
 namespace DataAccessObject;
 
-public  class AuthorDAO
+public class AuthorDAO
 {
     private readonly LibMgmtContext _dbContext = new();
 
@@ -26,4 +26,29 @@ public  class AuthorDAO
     public Author? GetById(int id) => _dbContext.Authors.SingleOrDefault(x => x.Id == id);
 
     public List<Author> SearchAuthors(string keyword) => _dbContext.Authors.Where(a => a.Name.ToLower().Contains(keyword.ToLower())).ToList();
+
+    public Author SaveAuthor(Author author)
+    {
+        if (author.Id == 0)
+        {
+            _dbContext.Authors.Add(author);
+        }
+        else
+        {
+            _dbContext.Authors.Update(author);
+        }
+        _dbContext.SaveChanges();
+        return author;
+    }
+
+    public bool Delete(int id) { 
+        var author = _dbContext.Authors.SingleOrDefault(a => a.Id == id);
+        if (author != null)
+        {
+            _dbContext.Authors.Remove(author);
+            _dbContext.SaveChanges();
+            return true;
+        }
+        return false;
+    }
 }
