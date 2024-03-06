@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using BusinessObjects.Models;
-using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.User
 {
     public class IndexModel : PageModel
     {
-        private readonly IAccountRepository accountRepository;
-        public IndexModel(IAccountRepository accountRepository)
+        private readonly IUserService userService;
+        public IndexModel(IUserService userService)
         {
-           this.accountRepository = accountRepository;
+            this.userService = userService;
         }
 
         public IList<Account> Account { get;set; } = default!;
 
         public void OnGet()
         {
-            Account = accountRepository.GetAll();
+            Account = userService.GetAccounts();
         }
     }
 }

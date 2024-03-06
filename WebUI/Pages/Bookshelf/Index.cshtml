@@ -1,0 +1,132 @@
+﻿@page
+@using WebUI.Binding
+@model WebUI.Pages.Bookshelf.IndexModel
+@{
+    ViewData["Title"] = "Your bookshelf";
+}
+@if (ViewData["ToastMessage"] != null)
+{
+    List<ToastMessage> toasts = (List<ToastMessage>?)ViewData["ToastMessage"] ?? new();
+
+    foreach (ToastMessage toast in toasts)
+    {
+        <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 5; right: 0; bottom: 0;">
+            <div id="liveToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+                <div class="toast-header">
+                    <strong class="mr-auto text-@toast.ToastTypeString">@toast.Title</strong>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    @toast.Message
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<div class="card">
+    <div class="card-header py-3">
+        <div class="row w-100">
+            <div class="col-10">
+                <h3 class="m-0 font-weight-bold text-primary">Your Bookshelf</h3>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.BorrowItems[0].BookNavigation.Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.BorrowItems[0].BorrowedDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.BorrowItems[0].Period) (Weeks)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.BorrowItems[0].ReturnedDate)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.BorrowItems)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BookNavigation.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BorrowedDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Period)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ReturnedDate)
+                            </td>
+                            <td class="d-flex justify-content-around">
+                                @if (item.ReturnedDate == null)
+                                {
+                                    <a data-toggle="modal" data-target="#returnModal" data-id="@item.Id" data-name="@item.BookNavigation.Name" class="btn btn-success openReturnModal">Return</a>
+                                } else
+                                {
+                                    <p>Returned</p>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Delete Account Modal-->
+<div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnBookModal"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="returnBookModal">Return this book?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>You want to return this book?</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-2 ">Name</dt>
+                    <dd class="col-sm-10 nameValue"></dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <form method="post" asp-page-handler="Return">
+                    <input type="hidden" id="idValue" name="id" class="idValue" />
+                    <button class="btn btn-success" type="submit">Return</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        console.log('event loaded');
+        $(".openReturnModal").click(function () {
+            console.log(this);
+            const id = $(this).data('id');
+            const name = $(this).data('name');
+            $('input.idValue').val(id);
+            $('dd.nameValue').html(name);
+        });
+    });
+</script>

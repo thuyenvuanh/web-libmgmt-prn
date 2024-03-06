@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using BusinessObjects.Models;
-using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.Authors
 {
     public class CreateModel : PageModel
     {
-        private readonly IAuthorRepository authorRepository;
+        private readonly IAuthorService authorService;
 
-        public CreateModel(IAuthorRepository authorRepository)
+        public CreateModel(IAuthorService authorService)
         {
-            this.authorRepository = authorRepository;
+            this.authorService = authorService;
         }
 
         public IActionResult OnGet()
@@ -29,7 +29,7 @@ namespace WebUI.Pages.Authors
                 return Page();
             }
 
-            authorRepository.SaveAuthor(Author);
+            authorService.SaveAuthor(Author);
 
             return RedirectToPage("./Index");
         }

@@ -1,29 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.Books
 {
     public class DeleteModel : PageModel
     {
-        public readonly IBookRepository bookRepository;
+        public readonly IBookService bookService;
 
-        public DeleteModel(IBookRepository bookRepository)
+        public DeleteModel(IBookService bookService)
         {
-            this.bookRepository = bookRepository;
+            this.bookService = bookService;
         }
 
         public IActionResult OnPost(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
-            var book = bookRepository.GetById((int)id);
+            var book = bookService.GetBook((int)id);
 
             if (book != null)
             {
-                bookRepository.Delete(book);
+                bookService.DeleteBook(book);
             }
 
             return RedirectToPage("./Index");

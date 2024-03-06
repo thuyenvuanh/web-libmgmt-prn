@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Repositories.Interfaces;
+using Services.Interfaces;
 using WebUI.Binding;
 
 namespace WebUI.Pages.Books
 {
     public class CreateModel : PageModel
     {
-        private readonly IBookRepository bookRepository;
-        private readonly IAuthorRepository authorRepository;
+        private readonly IBookService bookService;
+        private readonly IAuthorService authorService;
 
-        public CreateModel(IAuthorRepository authorRepository, IBookRepository bookRepository)
+        public CreateModel(IAuthorService authorService, IBookService bookService)
         {
-            this.authorRepository = authorRepository;
-            this.bookRepository = bookRepository;
+            this.authorService = authorService;
+            this.bookService = bookService;
         }
 
         [BindProperty]
@@ -21,7 +21,7 @@ namespace WebUI.Pages.Books
 
         public IActionResult OnGet()
         {
-            SelectableAuthor = authorRepository.GetAll().ConvertAll(author => $"{author.Id}. {author.Name}").ToList();
+            SelectableAuthor = authorService.GetAll().ConvertAll(author => $"{author.Id}. {author.Name}").ToList();
             return Page();
         }
 
@@ -36,7 +36,7 @@ namespace WebUI.Pages.Books
                 return Page();
             }
 
-            bookRepository.Save(Book.ToBook());
+            bookService.SaveBook(Book.ToBook());
 
             return RedirectToPage("Index");
         }

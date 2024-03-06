@@ -48,13 +48,22 @@
                                     <form class="user" method="post">
                                         <div class="form-group">
                                             <input class="form-control form-control-user" asp-for="RegisterForm.Email" placeholder="Enter Email Address...">
+                                            <span asp-validation-for="RegisterForm.Email" class="text-danger"></span>
                                         </div>
                                         <div class="form-group">
                                             <input class="form-control form-control-user" asp-for="RegisterForm.Password" placeholder="Password">
+                                            <span asp-validation-for="RegisterForm.Password" class="text-danger"></span>
                                         </div>
                                         <div class="form-group">
                                             <input class="form-control form-control-user" asp-for="RegisterForm.RePassword" placeholder="Re-enter password">
+                                            <span asp-validation-for="RegisterForm.RePassword" class="text-danger"></span>
                                         </div>
+                                        @if (ViewData["ErrorMessage"] != null)
+                                        {
+                                            <div class="alert alert-danger" role="alert" id="ErrorMessage">
+                                                @ViewData["ErrorMessage"]
+                                            </div>
+                                        }
                                         <button class="btn btn-primary btn-user btn-block" type="submit">
                                             Register
                                         </button>
@@ -74,6 +83,31 @@
 
     </div>
 
+    <script>
+        // remove error message when changes in input field happened
+        document.addEventListener("DOMContentLoaded", function (event) {
+            console.log('event loaded');
+            $("input#RegisterForm_Email").on('input', () => {
+                $("div#ErrorMessage").remove();
+                $("input#RegisterForm_Email").off();
+                $("input#RegisterForm_Password").off();
+                $("input#RegisterForm_RePassword").off();
+            })
+            $("input#RegisterForm_Password").on('input', () => {
+                $("div#ErrorMessage").remove();
+                $("input#RegisterForm_Email").off();
+                $("input#RegisterForm_Password").off();
+                $("input#RegisterForm_RePassword").off();
+            })
+            $("input#RegisterForm_RePassword").on('input', () => {
+                $("div#ErrorMessage").remove();
+                $("input#RegisterForm_Email").off();
+                $("input#RegisterForm_Password").off();
+                $("input#RegisterForm_RePassword").off();
+            })
+        });
+    </script>
+
     <!-- Bootstrap core JavaScript-->
     <script src="~/vendor/jquery/jquery.min.js"></script>
     <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -83,6 +117,12 @@
 
     <!-- Custom scripts for all pages-->
     <script src="~/js/sb-admin-2.min.js"></script>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
 
 </body>
 

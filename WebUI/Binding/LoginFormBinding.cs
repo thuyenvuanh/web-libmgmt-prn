@@ -10,6 +10,5 @@ namespace WebUI.Binding
         [DataType(DataType.Password)]
         [Required]
         public string? Password { get; set; }
-        public bool RememberMe { get; set; }
     }
 }

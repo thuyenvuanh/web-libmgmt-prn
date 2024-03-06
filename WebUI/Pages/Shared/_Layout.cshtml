@@ -1,4 +1,5 @@
-﻿@using BusinessObjects.Models
+﻿@using BusinessObjects
+@using BusinessObjects.Models
 @using WebUI.Utils
 @{
     Account user = new();
@@ -46,34 +47,63 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
+            @* <li class="nav-item">
                 <a class="nav-link" asp-page="/Index">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-            </li>
+            </li> *@
+
+            @{
+                ERole role = (ERole)Context.Session.GetObjectFromJson<Account>(SessionUtils.LOGGED_IN_USER_KEY).Role;
+                switch (role)
+                {
+                    case ERole.Administrator:
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/User/Index" asp-area="">
+                                <i class="fas fa-user"></i>
+                                <span>Users</span>
+                            </a>
+                        </li>
+                        break;
+                    case ERole.Manager:
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Authors/Index" asp-area="">
+                                <i class="fas fa-pen-nib"></i>
+                                <span>Author</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Books/Index" asp-area="">
+                                <i class="fas fa-book"></i>
+                                <span>Books</span>
+                            </a>
+                        </li>
+                        break;
+                    case ERole.Customer:
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Browse/Index" asp-area="">
+                                <i class="fas fa-globe"></i>
+                                <span>Browse</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Bookshelf/Index" asp-area="">
+                                <i class="fas fa-book"></i>
+                                <span>Your bookshelf</span>
+                            </a>
+                        </li>
+                        break;
+                }
+            }
 
             <!-- Nav Item - UserManagement -->
-            <li class="nav-item">
-                <a class="nav-link" asp-page="/User/Index" asp-area="">
-                    <i class="fas fa-user"></i>
-                    <span>User Management</span>
-                </a>
-            </li>
+            
 
-            <li class="nav-item">
-                <a class="nav-link" asp-page="/Authors/Index" asp-area="">
-                    <i class="fas fa-pen-nib"></i>
-                    <span>Author Management</span>
-                </a>
-            </li>
+            
 
-            <li class="nav-item">
-                <a class="nav-link" asp-page="/Books/Index" asp-area="">
-                    <i class="fas fa-book"></i>
-                    <span>Books Management</span>
-                </a>
-            </li>
+            
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

@@ -4,16 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using WebUI.Binding;
 using System.ComponentModel.DataAnnotations;
+using Services.Interfaces;
 
 namespace WebUI.Pages.User
 {
     public class EditModel : PageModel
     {
-        private readonly IAccountRepository accountRepository;
+        private readonly IUserService userService;
 
-        public EditModel(IAccountRepository accountRepository)
+        public EditModel(IUserService userService)
         {
-            this.accountRepository = accountRepository;
+            this.userService = userService;
         }
 
         [BindProperty]
@@ -31,15 +32,15 @@ namespace WebUI.Pages.User
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
 
-            var account =  accountRepository.GetByID((int)id);
+            var account =  userService.GetAccount((int)id);
 
 
             if (account == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
             Account = RegisterFormBinding.FromAccount(account);
             return Page();
@@ -52,10 +53,10 @@ namespace WebUI.Pages.User
                 return Page();
             }
 
-            var currentAccount = accountRepository.GetByID(Account.Id);
+            var currentAccount = userService.GetAccount(Account.Id);
             if (currentAccount == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
             if (!currentAccount.Password.Equals(OldPassword))
             {
@@ -66,13 +67,13 @@ namespace WebUI.Pages.User
             try
             {
                 currentAccount.UpdateWith(Account.ToAccount());
-                accountRepository.SaveAccount(currentAccount);
+                userService.SaveAccount(currentAccount);
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!AccountExists(Account.Id))
                 {
-                    return NotFound();
+                    return RedirectToPage("Errors/404");
                 }
                 else
                 {
@@ -85,7 +86,7 @@ namespace WebUI.Pages.User
 
         private bool AccountExists(int id)
         {
-            return accountRepository.GetByID(id) != null;
+            return userService.GetAccount(id) != null;
         }
     }
 }

@@ -27,18 +27,21 @@ namespace WebUI.Pages
         {
             if (ModelState.IsValid)
             {
-                var account = authService.Regiser(RegisterForm.Email!, RegisterForm.Password!);
-                if (account == null)
+                try
                 {
-                    // Error when register new user
+                    var account = authService.Regiser(RegisterForm.Email!, RegisterForm.Password!);
+                    HttpContext.Session.SetObjectAsJson(SessionUtils.LOGGED_IN_USER_KEY, account);
+                    return RedirectToPage("/Index");
+                }
+                catch (Exception e)
+                {
+                    ViewData["ErrorMessage"] = e.Message;
                     return Page();
                 }
-
-                HttpContext.Session.SetObjectAsJson(SessionUtils.LOGGED_IN_USER_KEY, account);
-                return RedirectToPage("/Index");
             }
             else
             {
+                ViewData["ErrorMessage"] = "Incorrect email or password";
                 return Page();
             }
         }

@@ -1,23 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BusinessObjects.Models;
-using Repositories.Interfaces;
-using Repositories;
+using Services.Interfaces;
 using WebUI.Binding;
 
 namespace WebUI.Pages.Books
 {
     public class EditModel : PageModel
     {
-        private readonly IBookRepository bookRepository;
-        private readonly IAuthorRepository authorRepository;
+        private readonly IBookService bookService;
+        private readonly IAuthorService authorService;
 
-        public EditModel(IBookRepository bookRepository, IAuthorRepository authorRepository)
+        public EditModel(IBookService bookService, IAuthorService authorService)
         {
-            this.bookRepository = bookRepository;
-            this.authorRepository = authorRepository;
+            this.bookService = bookService;
+            this.authorService = authorService;
         }
 
         [BindProperty]
@@ -30,21 +27,19 @@ namespace WebUI.Pages.Books
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
 
-            var book = bookRepository.GetById((int)id);
+            var book = bookService.GetBook((int)id);
             if (book == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
             Book = NewBookBinding.FromBook(book);
-            SelectableAuthor = authorRepository.GetAll().ConvertAll(author => $"{author.Id}. {author.Name}").ToList();
+            SelectableAuthor = authorService.GetAll().ConvertAll(author => $"{author.Id}. {author.Name}").ToList();
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
@@ -52,22 +47,22 @@ namespace WebUI.Pages.Books
                 return Page();
             }
 
-            var currentBook = bookRepository.GetById(Book.Id);
+            var currentBook = bookService.GetBook(Book.Id);
             if (currentBook == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
 
             try
             {
                 currentBook.UpdateWith(Book.ToBook());
-                bookRepository.Save(currentBook);
+                bookService.SaveBook(currentBook);
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!BookExists(Book.Id))
                 {
-                    return NotFound();
+                    return RedirectToPage("Errors/404");
                 }
                 else
                 {
@@ -80,7 +75,7 @@ namespace WebUI.Pages.Books
 
         private bool BookExists(int id)
         {
-            return bookRepository.GetById(id) != null;
+            return bookService.GetBook(id) != null;
         }
     }
 }

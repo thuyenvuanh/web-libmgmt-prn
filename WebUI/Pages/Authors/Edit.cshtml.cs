@@ -2,17 +2,17 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObjects.Models;
-using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.Authors
 {
     public class EditModel : PageModel
     {
-        private readonly IAuthorRepository authorRepository;
+        private readonly IAuthorService authorService;
 
-        public EditModel(IAuthorRepository authorRepository)
+        public EditModel(IAuthorService authorService)
         {
-            this.authorRepository = authorRepository;
+            this.authorService = authorService;
         }
 
         [BindProperty]
@@ -22,42 +22,42 @@ namespace WebUI.Pages.Authors
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
 
-            var author = authorRepository.GetById((int)id);
+            var author = authorService.GetAuthor((int)id);
             if (author == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
             Author = author;
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            var selectedAuthor = authorRepository.GetById(Author.Id);
+            var selectedAuthor = authorService.GetAuthor(Author.Id);
 
             if (selectedAuthor == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
 
             try
             {
                 selectedAuthor.UpdateWith(Author);
-                authorRepository.SaveAuthor(selectedAuthor);
+                authorService.SaveAuthor(selectedAuthor);
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!AuthorExists(Author.Id))
                 {
-                    return NotFound();
+                    return RedirectToPage("Errors/404");
                 }
                 else
                 {
@@ -70,7 +70,7 @@ namespace WebUI.Pages.Authors
 
         private bool AuthorExists(int id)
         {
-          return authorRepository.GetById(id) != null;
+          return authorService.GetAuthor(id) != null;
         }
     }
 }

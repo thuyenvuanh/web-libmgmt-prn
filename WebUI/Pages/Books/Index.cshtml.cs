@@ -1,23 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using BusinessObjects.Models;
-using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.Books
 {
     public class IndexModel : PageModel
     {
-        private readonly IBookRepository bookRepository;
+        private readonly IBookService bookService;
 
-        public IndexModel(IBookRepository bookRepository)
+        public IndexModel(IBookService bookService)
         {
-            this.bookRepository = bookRepository;
+            this.bookService = bookService;
         }
 
         public IList<Book> Book { get;set; } = default!;
 
         public void OnGet()
         {
-            Book = bookRepository.GetAll();
+            Book = bookService.GetAllBooks();
         }
     }
 }

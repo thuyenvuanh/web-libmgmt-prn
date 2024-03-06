@@ -49,5 +49,5 @@ public class BorrowItemDAO
 
     public BorrowItem? GetBorrowItemById(int id) => _dbContext.BorrowItems.FirstOrDefault(bi => bi.Id == id);
 
-    public BorrowItem? GetBorrowItemByAccountAndBook(int accountId, int book) => _dbContext.BorrowItems.FirstOrDefault(bi => bi.Book == book && bi.Borrower == accountId);
+    public List<BorrowItem> GetBorrowItemByAccountAndBook(int accountId, int book) => _dbContext.BorrowItems.Where(bi => bi.Book == book && bi.Borrower == accountId).ToList();
 }

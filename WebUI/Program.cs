@@ -1,4 +1,5 @@
 using BusinessObjects.Models;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Repositories;
 using Repositories.Interfaces;
 using Services;
@@ -21,6 +22,10 @@ builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IBookRepository,  BookRepository>();
 builder.Services.AddScoped<IBorrowItemRepository, BorrowItemRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IBorrowItemService, BorrowItemService>();
 
 var app = builder.Build();
 
@@ -38,7 +43,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
-
 app.MapRazorPages();
 
 app.Run();

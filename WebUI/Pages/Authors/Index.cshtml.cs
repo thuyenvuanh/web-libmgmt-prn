@@ -1,23 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using BusinessObjects.Models;
-using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.Authors
 {
     public class IndexModel : PageModel
     {
-        private readonly IAuthorRepository authorRepository;
+        private readonly IAuthorService authorService;
 
-        public IndexModel(IAuthorRepository authorRepository)
+        public IndexModel(IAuthorService authorService)
         {
-            this.authorRepository = authorRepository;
+            this.authorService = authorService;
         }
 
         public IList<Author> Author { get;set; } = default!;
 
         public void OnGet()
         {
-            Author = authorRepository.GetAll();
+            Author = authorService.GetAll();
         }
     }
 }

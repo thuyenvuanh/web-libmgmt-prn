@@ -2,16 +2,17 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using BusinessObjects.Models;
 using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.Authors
 {
     public class DeleteModel : PageModel
     {
-        private readonly IAuthorRepository _authorRepository;
+        private readonly IAuthorService authorService;
 
-        public DeleteModel(IAuthorRepository authorRepository)
+        public DeleteModel(IAuthorService authorService)
         {
-            this._authorRepository = authorRepository;
+            this.authorService = authorService;
         }
 
         [BindProperty]
@@ -22,13 +23,13 @@ namespace WebUI.Pages.Authors
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
-            var author = _authorRepository.GetById((int)id);
+            var author = authorService.GetAuthor((int)id);
 
             if (author != null)
             {
-                _authorRepository.DeleteAuthor((int)id);
+                authorService.DeleteAuthor((int)id);
             }
 
             return RedirectToPage("./Index");

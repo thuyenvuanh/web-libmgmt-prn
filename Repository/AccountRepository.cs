@@ -44,6 +44,11 @@ public class AccountRepository : IAccountRepository
 
     public Account Register(Account account)
     {
+        var existed = AccountDAO.Instance.SearchByEmail(account.Email).Any();
+        if (existed)
+        {
+            throw new Exception("Email existed");
+        }
         account.Role = (int) ERole.Customer;
         AccountDAO.Instance.SaveAccount(account);
         return GetByEmail(account.Email)!;

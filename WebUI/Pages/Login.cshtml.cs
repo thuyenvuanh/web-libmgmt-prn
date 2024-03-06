@@ -30,6 +30,7 @@ public class LoginModel : PageModel
             var account = authService.Login(LoginForm.Email!, LoginForm.Password!);
             if (account == null)
             {
+                ViewData["ErrorMessage"] = "Incorrect email or password";
                 return Page();
             } 
             else

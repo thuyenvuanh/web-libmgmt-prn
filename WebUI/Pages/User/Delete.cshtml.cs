@@ -1,17 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using BusinessObjects.Models;
-using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.User
 {
     public class DeleteModel : PageModel
     {
-        private readonly IAccountRepository accountRepository;
+        private readonly IUserService userService;
 
-        public DeleteModel(IAccountRepository accountRepository)
+        public DeleteModel(IUserService userService)
         {
-            this.accountRepository = accountRepository;
+            this.userService = userService;
         }
 
         public IActionResult OnGet(int? id)
@@ -19,18 +18,18 @@ namespace WebUI.Pages.User
             return RedirectToPage("/User/Index");
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public IActionResult OnPost(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToPage("Errors/404");
             }
 
-            var account = accountRepository.GetByID((int)id);
+            var account = userService.GetAccount((int)id);
 
             if (account != null)
             {
-                accountRepository.Delete(account);
+                userService.DeleteAccount(account);
             }
 
             return RedirectToPage("./Index");

@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebUI.Binding;
-using Repositories.Interfaces;
+using Services.Interfaces;
 
 namespace WebUI.Pages.User
 {
     public class CreateModel : PageModel
     {
-        private readonly IAccountRepository accountRepository;
+        private readonly IUserService userService;
 
-        public CreateModel(IAccountRepository accountRepository)
+        public CreateModel(IUserService userService)
         {
-            this.accountRepository = accountRepository;
+            this.userService = userService;
         }
 
         public IActionResult OnGet()
@@ -29,7 +29,7 @@ namespace WebUI.Pages.User
                 return Page();
             }
 
-            accountRepository.SaveAccount(Account.ToAccount());
+            userService.SaveAccount(Account.ToAccount());
 
             return RedirectToPage("./Index");
         }

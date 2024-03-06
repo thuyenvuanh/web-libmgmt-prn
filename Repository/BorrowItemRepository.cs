@@ -4,11 +4,16 @@ using Repositories.Interfaces;
 
 namespace Repositories;
 
-public class BorrowItemRepository: IBorrowItemRepository
+public class BorrowItemRepository : IBorrowItemRepository
 {
     public BorrowItem BorrowBook(BorrowItem borrowItem) => BorrowItemDAO.Instance.UpdateBorrowItem(borrowItem);
 
-    public BorrowItem? GetBorrowItemByAccountAndBook(int accountId, int bookId)
+    public BorrowItem? GetBorrowItem(int id)
+    {
+        return BorrowItemDAO.Instance.GetBorrowItemById(id);
+    }
+
+    public List<BorrowItem> GetBorrowItemByAccountAndBook(int accountId, int bookId)
     {
         return BorrowItemDAO.Instance.GetBorrowItemByAccountAndBook(accountId, bookId);
     }

@@ -52,15 +52,12 @@
                                         <div class="form-group">
                                             <input class="form-control form-control-user" asp-for="LoginForm.Password" placeholder="Password">
                                         </div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input class="custom-control-input" asp-for="LoginForm.RememberMe" id="RememberMe">
-                                                <label class="custom-control-label" for="RememberMe">
-                                                    Remember
-                                                    Me
-                                                </label>
+                                        @if (ViewData["ErrorMessage"] != null)
+                                        {
+                                            <div class="alert alert-danger" role="alert" id="ErrorMessage">
+                                                @ViewData["ErrorMessage"]
                                             </div>
-                                        </div>
+                                        }
                                         <button class="btn btn-primary btn-user btn-block" type="submit">
                                             Login
                                         </button>
@@ -79,6 +76,23 @@
         </div>
 
     </div>
+
+    <script>
+        // remove error message when changes in input field happened
+        document.addEventListener("DOMContentLoaded", function (event) {
+            console.log('event loaded');
+            $("input#LoginForm_Email").on('input', () => {
+                $("div#ErrorMessage").remove();
+                $("input#LoginForm_Email").off();
+                $("input#LoginForm_Password").off();
+            })
+            $("input#LoginForm_Password").on('input', () => {
+                $("div#ErrorMessage").remove();
+                $("input#LoginForm_Email").off();
+                $("input#LoginForm_Password").off();
+            })
+        });
+    </script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="~/vendor/jquery/jquery.min.js"></script>
